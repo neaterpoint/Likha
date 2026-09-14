@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap');
+
+:root {
+    --primary-dark: #16563d;
+    --card-bg: #8fe0b5;
+    --button-bg: #d4f7e5;
+    --button-hover: #c0edd5;
+    --input-bg: #ffffff;
+    --text-color: #16563d;
+    --error-color: #d93025;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+/* Outer layout */
+.auth-wrapper {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    /* Pushes the login container to the right side of the screen */
+    justify-content: flex-end; 
+    /* The 12vw controls how far the form is from the right edge */
+    padding: 2rem 12vw; 
+    overflow: hidden;
+}
+
+/* Graphic Container */
+.hero-graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* The Logo Image */
+.hero-graphic img {
+    position: absolute;
+    max-width: none; /* Removes the previous restriction */
+    
+    /* === ADJUST THESE 3 VALUES TO FINE-TUNE === */
+    width: 1200px;   /* 1. Size: Increases the overall scale of the gear */
+    top: -313px;     /* 2. Vertical: Negative value pulls the logo UP */
+    left: -313px;    /* 3. Horizontal: Negative value pulls the logo LEFT */
+}
+
+/* Right Content Area */
+.auth-container {
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+/* LiKHA Brand Title */
+.brand-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--primary-dark);
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Auth Card */
+.auth-card {
+    background-color: var(--card-bg);
+    border-radius: 32px;
+    width: 100%;
+    padding: 2.5rem 2.2rem;
+    box-shadow: 0 10px 25px rgba(22, 86, 61, 0.08);
+}
+
+.auth-card h2 {
+    color: var(--text-color);
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Messages & Alerts */
+.message-box {
+    margin-bottom: 1.2rem;
+}
+
+.message-box p {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Form Input Styling */
+.form-group input {
+    width: 100%;
+    height: 42px;
+    border-radius: 21px;
+    border: none;
+    outline: none;
+    padding: 0 1.2rem;
+    font-size: 0.95rem;
+    color: #222;
+    background-color: var(--input-bg);
+    transition: box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    box-shadow: 0 0 0 3px rgba(22, 86, 61, 0.25);
+}
+
+.field-error {
+    color: var(--error-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+
+/* Link */
+.auth-switch {
+    text-align: center;
+    margin: 1.2rem 0;
+}
+
+.auth-switch a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    transition: opacity 0.2s ease;
+}
+
+.auth-switch a:hover {
+    opacity: 0.75;
+}
+
+/* Button */
+.btn-submit {
+    width: 100%;
+    height: 44px;
+    background-color: var(--button-bg);
+    border: none;
+    border-radius: 22px;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-submit:hover {
+    background-color: var(--button-hover);
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .auth-wrapper {
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+    }
+
+    .hero-graphic {
+        margin-bottom: -40px;
+        opacity: 0.18;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .hero-graphic img {
+        transform: none;
+        max-width: 380px;
+    }
+
+    .auth-container {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .brand-title {
+        font-size: 3rem;
+    }
+}

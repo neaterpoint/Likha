@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiKHA - Login</title>
+    <link rel="stylesheet" href="{% static 'css/login/login.css' %}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <!-- Hero Background Gear -->
+        <div class="hero-graphic">
+            <img src="{% static 'images/login/logo.png' %}" alt="Likha Logo">
+        </div>
+
+        <!-- Auth Form Section -->
+        <div class="auth-container">
+            <h1 class="brand-title">LiKHA</h1>
+
+            <div class="auth-card">
+                <h2>LOGIN</h2>
+
+                {% if messages %}
+                    <div class="message-box">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <span class="field-error">{{ field.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="auth-switch">
+                        <a href="{% url 'register:register' %}">DON'T HAVE AN ACCOUNT? REGISTER?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit">SIGN IN</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/login/login.js' %}"></script>
+</body>
+</html>
