@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LiKHA - Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
+</head>
+<body>
+    <h1>Your Profile</h1>
+
+    {% if messages %}
+        <div class="message-box">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="full_name">Full name</label>
+            <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}">
+        </div>
+
+        <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio">{{ profile.bio }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="profile_image">Profile image</label>
+            {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="Current profile image" width="120">
+            {% endif %}
+            <input type="file" id="profile_image" name="profile_image">
+        </div>
+
+        <button type="submit">Save</button>
+    </form>
+
+    <a href="{% url 'home:home' %}">Back to Home</a>
+</body>
+</html>
