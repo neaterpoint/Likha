@@ -39,7 +39,7 @@
                         <p class="switch-subtitle">Use a darker color scheme.</p>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" name="dark_mode" {% if settings.dark_mode %}checked{% endif %}>
+                        <input type="checkbox" name="dark_mode" {% if settings.theme == 'dark' %}checked{% endif %}>
                         <span class="slider"></span>
                     </label>
                 </div>
