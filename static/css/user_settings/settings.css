@@ -1,1 +1,246 @@
-/* Settings feature styles go here */
+/* ---- shared minimal layout rules, copied into both profile.css and settings.css ---- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+
+:root {
+    --primary-dark: #16563d;
+    --card-bg: #ffffff;
+    --page-bg: #f4f8f6;
+    --accent: #8fe0b5;
+    --button-bg: #d4f7e5;
+    --button-hover: #c0edd5;
+    --border-color: #e4ece8;
+    --text-color: #16563d;
+    --text-muted: #6b8f7f;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--page-bg);
+    color: var(--text-color);
+}
+
+/* Top bar */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.topbar .brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--text-color);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.topbar nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.topbar nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transition: color 0.15s ease;
+}
+
+.topbar nav a:hover {
+    color: var(--text-color);
+}
+
+.topbar nav a.active {
+    color: var(--text-color);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Page + card */
+.page {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+}
+
+.card {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 6px 20px rgba(22, 86, 61, 0.06);
+}
+
+.card h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 1.75rem;
+}
+
+.messages {
+    margin-bottom: 1.25rem;
+}
+
+.messages p {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    background-color: var(--button-bg);
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+}
+
+/* Fields (shared with profile form) */
+.field {
+    margin-bottom: 1.25rem;
+}
+
+.field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.field input[type="text"],
+.field textarea {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text-color);
+    background-color: #fafdfc;
+    outline: none;
+    resize: vertical;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.field input[type="text"]:focus,
+.field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(143, 224, 181, 0.35);
+}
+
+/* Primary button */
+.btn-primary {
+    width: 100%;
+    height: 46px;
+    border: none;
+    border-radius: 23px;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--button-hover);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 560px) {
+    .topbar {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+    .card {
+        padding: 1.75rem;
+    }
+}
+
+/* ---- settings-specific ---- */
+.switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.switch-row:last-of-type {
+    border-bottom: none;
+}
+
+.switch-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.switch-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--border-color);
+    border-radius: 24px;
+    transition: background-color 0.15s ease;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.15s ease;
+}
+
+.switch input:checked + .slider {
+    background-color: var(--accent);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(20px);
+}

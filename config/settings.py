@@ -3,8 +3,13 @@ Django settings for the Likha project.
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-cneg1$*bi=02mi-ugcb8+8g*jwrv$tw*vw0vr@udj!a5f0302h'
@@ -68,11 +73,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # guide, this whole DATABASES block gets replaced with dj_database_url.parse(...).
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(
+    os.environ["DATABASE_URL"],
+    conn_max_age=600,
+    ssl_require=True,
+    )
 }
+
 
 
 # Password validation

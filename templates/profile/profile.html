@@ -3,44 +3,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiKHA - Profile</title>
     <link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
 </head>
 <body>
-    <h1>Your Profile</h1>
+    <header class="topbar">
+        <a href="{% url 'home:home' %}" class="brand">LiKHA</a>
+        <nav>
+            <a href="{% url 'home:home' %}">Home</a>
+            <a href="{% url 'profile:profile' %}" class="active">Profile</a>
+            <a href="{% url 'user_settings:settings' %}">Settings</a>
+            <a href="{% url 'login:logout' %}">Logout</a>
+        </nav>
+    </header>
 
-    {% if messages %}
-        <div class="message-box">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <main class="page">
+        <div class="card">
+            <h1>Profile</h1>
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="full_name">Full name</label>
-            <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}">
-        </div>
-
-        <div class="form-group">
-            <label for="bio">Bio</label>
-            <textarea id="bio" name="bio">{{ profile.bio }}</textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="profile_image">Profile image</label>
-            {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="Current profile image" width="120">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
             {% endif %}
-            <input type="file" id="profile_image" name="profile_image">
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="avatar-row">
+                    <div class="avatar">
+                        {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" alt="Profile image">
+                        {% else %}
+                            <span>{{ user.username|slice:":1"|upper }}</span>
+                        {% endif %}
+                    </div>
+                    <label class="file-label">
+                        Change photo
+                        <input type="file" name="profile_image" hidden>
+                    </label>
+                </div>
+
+                <div class="field">
+                    <label for="full_name">Full name</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}" placeholder="Your name">
+                </div>
+
+                <div class="field">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="A short bio">{{ profile.bio }}</textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Save changes</button>
+            </form>
         </div>
-
-        <button type="submit">Save</button>
-    </form>
-
-    <a href="{% url 'home:home' %}">Back to Home</a>
+    </main>
 </body>
 </html>
