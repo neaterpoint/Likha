@@ -3,18 +3,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Likha - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiKHA - Home</title>
     <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
 </head>
 <body>
-    <h1>Welcome, {{ user.username }}!</h1>
-    <p>This is your HOME SCREEN.</p>
+    <header class="topbar">
+        <a href="{% url 'home:home' %}" class="brand">LiKHA</a>
+        <nav>
+            <a href="{% url 'home:home' %}" class="active">Home</a>
+            <a href="{% url 'profile:profile' %}">Profile</a>
+            <a href="{% url 'user_settings:settings' %}">Settings</a>
+            <a href="{% url 'login:logout' %}">Logout</a>
+        </nav>
+    </header>
 
-    <nav>
-        <a href="{% url 'profile:profile' %}">Profile</a>
-        <a href="{% url 'user_settings:settings' %}">Settings</a>
-        <a href="{% url 'login:logout' %}">Logout</a>
-    </nav>
+    <main class="page">
+        <div class="welcome-card">
+            <p class="eyebrow">Welcome back</p>
+            <h1>Hi, {{ user.username }}</h1>
+            <p class="subtitle">Here's a quick look at your account.</p>
+        </div>
+
+        <div class="grid">
+            <a href="{% url 'profile:profile' %}" class="tile">
+                <span class="tile-icon" aria-hidden="true">&#9998;</span>
+                <span class="tile-title">Profile</span>
+                <span class="tile-desc">Update your name, bio, and photo.</span>
+            </a>
+
+            <a href="{% url 'user_settings:settings' %}" class="tile">
+                <span class="tile-icon" aria-hidden="true">&#9881;</span>
+                <span class="tile-title">Settings</span>
+                <span class="tile-desc">Manage dark mode and notifications.</span>
+            </a>
+
+            <a href="{% url 'login:logout' %}" class="tile tile-muted">
+                <span class="tile-icon" aria-hidden="true">&#8618;</span>
+                <span class="tile-title">Logout</span>
+                <span class="tile-desc">Sign out of your account.</span>
+            </a>
+        </div>
+    </main>
 
     <script src="{% static 'js/home/home.js' %}"></script>
 </body>
