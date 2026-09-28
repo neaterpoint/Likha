@@ -35,21 +35,26 @@
 
                 <div class="avatar-row">
                     <div class="avatar">
-                        {% if profile.profile_image %}
-                            <img src="{{ profile.profile_image.url }}" alt="Profile image">
+                        {% if profile.avatar_path %}
+                            <img src="{{ profile.avatar_path.url }}" alt="Profile image">
                         {% else %}
                             <span>{{ user.username|slice:":1"|upper }}</span>
                         {% endif %}
                     </div>
                     <label class="file-label">
                         Change photo
-                        <input type="file" name="profile_image" hidden>
+                        <input type="file" name="avatar_path" hidden>
                     </label>
                 </div>
 
                 <div class="field">
-                    <label for="full_name">Full name</label>
-                    <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}" placeholder="Your name">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ profile.first_name }}" placeholder="First name">
+                </div>
+
+                <div class="field">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ profile.last_name }}" placeholder="Last name">
                 </div>
 
                 <div class="field">
