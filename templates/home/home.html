@@ -12,6 +12,8 @@
         <a href="{% url 'home:home' %}" class="brand">LiKHA</a>
         <nav>
             <a href="{% url 'home:home' %}" class="active">Home</a>
+            <a href="{% url 'home:scan' %}">Scan</a>
+            <a href="{% url 'home:history' %}">History</a>
             <a href="{% url 'profile:profile' %}">Profile</a>
             <a href="{% url 'user_settings:settings' %}">Settings</a>
             <a href="{% url 'login:logout' %}">Logout</a>
@@ -22,10 +24,22 @@
         <div class="welcome-card">
             <p class="eyebrow">Welcome back</p>
             <h1>Hi, {{ user.username }}</h1>
-            <p class="subtitle">Here's a quick look at your account.</p>
+            <p class="subtitle">Ready to give some scrap a second life?</p>
         </div>
 
         <div class="grid">
+            <a href="{% url 'home:scan' %}" class="tile">
+                <span class="tile-icon" aria-hidden="true">&#128247;</span>
+                <span class="tile-title">Scan an item</span>
+                <span class="tile-desc">Identify scrap and get upcycling ideas.</span>
+            </a>
+
+            <a href="{% url 'home:history' %}" class="tile">
+                <span class="tile-icon" aria-hidden="true">&#128339;</span>
+                <span class="tile-title">History</span>
+                <span class="tile-desc">Revisit your past scans and projects.</span>
+            </a>
+
             <a href="{% url 'profile:profile' %}" class="tile">
                 <span class="tile-icon" aria-hidden="true">&#9998;</span>
                 <span class="tile-title">Profile</span>

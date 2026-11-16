@@ -1,0 +1,7 @@
+django
+python-dotenv
+dj-database-url
+psycopg[binary]
+google-genai
+requests
+pillow

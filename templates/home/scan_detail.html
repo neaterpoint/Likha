@@ -1,0 +1,11 @@
+{% extends "home/scanner_base.html" %}
+{% block title %}LiKHA - {{ scan.item_name|capfirst }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'home:history' %}">&larr; Back to history</a>
+<p class="eyebrow">Scanned {{ scan.scanned_at|date:"M j, Y · g:i A" }}</p>
+{% if data %}
+    {% include "home/_result.html" %}
+{% else %}
+    <div class="panel empty">No saved details for this scan.</div>
+{% endif %}
+{% endblock %}

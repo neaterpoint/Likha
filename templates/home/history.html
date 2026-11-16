@@ -1,0 +1,28 @@
+{% extends "home/scanner_base.html" %}
+{% block title %}LiKHA - History{% endblock %}
+{% block content %}
+<div class="welcome-card">
+    <p class="eyebrow">Your scans</p>
+    <h1>History</h1>
+    <p class="subtitle">Open any past scan to see its ideas again. No new AI call needed.</p>
+</div>
+
+{% for scan in scans %}
+<div class="history-item">
+    <div>
+        <div class="name">{{ scan.item_name|capfirst }}</div>
+        {% if scan.is_recyclable %}<span class="chip">Recyclable</span>{% else %}<span class="chip chip-no">Not recyclable</span>{% endif %}
+        <div class="when">{{ scan.scanned_at|date:"M j, Y · g:i A" }}</div>
+    </div>
+    <div class="row-actions">
+        <a class="btn-secondary" style="height:38px" href="{% url 'home:history_detail' scan.scan_id %}">View</a>
+        <form method="post" action="{% url 'home:history_delete' scan.scan_id %}" onsubmit="return confirm('Delete this scan?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+{% empty %}
+<div class="panel empty">No scans yet. <a href="{% url 'home:scan' %}">Scan your first item</a>.</div>
+{% endfor %}
+{% endblock %}

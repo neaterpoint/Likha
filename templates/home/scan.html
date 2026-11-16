@@ -1,0 +1,120 @@
+{% extends "home/scanner_base.html" %}
+{% block title %}LiKHA - Scan{% endblock %}
+{% block content %}
+<div class="welcome-card">
+    <p class="eyebrow">Identify &amp; upcycle</p>
+    <h1>Scan an item</h1>
+    <p class="subtitle">Take a photo of one piece of household scrap. We'll tell you what it is, if it's recyclable, what a junk shop might pay, and how to give it a second life.</p>
+</div>
+
+<form id="scan-form" class="panel">
+    {% csrf_token %}
+    <input id="image-input" type="file" name="image" accept="image/*" capture="environment" hidden>
+
+    <label for="image-input" class="dropzone" id="dropzone">
+        <span class="tile-icon" aria-hidden="true">&#128247;</span>
+        <strong>Tap to take or choose a photo</strong>
+        <small>One item, good lighting, fills the frame</small>
+    </label>
+
+    <div class="actions">
+        <button type="submit" class="btn-primary" id="submit-btn" disabled>Identify &amp; get ideas</button>
+        <button type="button" class="btn-secondary" id="reset-btn" hidden>Clear</button>
+    </div>
+
+    <div class="status" id="status" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Analyzing your photo&hellip; this can take 10&ndash;30 seconds.</span>
+    </div>
+</form>
+
+<div id="error" class="notice notice-error" role="alert" hidden></div>
+<div id="result"></div>
+
+<script>
+(function () {
+    const form = document.getElementById('scan-form');
+    const input = document.getElementById('image-input');
+    const dropzone = document.getElementById('dropzone');
+    const dropzoneDefault = dropzone.innerHTML;
+    const submitBtn = document.getElementById('submit-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const statusEl = document.getElementById('status');
+    const errorEl = document.getElementById('error');
+    const resultEl = document.getElementById('result');
+
+    function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
+    function clearError() { errorEl.hidden = true; }
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+        dropzone.innerHTML = '';
+        const img = document.createElement('img');
+        img.alt = 'Preview of your photo';
+        img.src = URL.createObjectURL(file);
+        dropzone.appendChild(img);
+        submitBtn.disabled = false;
+        resetBtn.hidden = false;
+        resultEl.innerHTML = '';
+        clearError();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        input.value = '';
+        dropzone.innerHTML = dropzoneDefault;
+        submitBtn.disabled = true;
+        resetBtn.hidden = true;
+        resultEl.innerHTML = '';
+        clearError();
+    });
+
+    // Shrink big phone photos in the browser so uploads are quick on mobile data.
+    function downscale(file, maxSide = 1280) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(img.width * scale);
+                canvas.height = Math.round(img.height * scale);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob((blob) => resolve(blob || file), 'image/jpeg', 0.85);
+            };
+            img.onerror = () => resolve(file);   // server re-validates anyway
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = input.files[0];
+        if (!file) return;
+
+        submitBtn.disabled = true;
+        clearError();
+        resultEl.innerHTML = '';
+        statusEl.classList.add('on');
+
+        try {
+            const blob = await downscale(file);
+            const fd = new FormData();
+            fd.append('csrfmiddlewaretoken', form.querySelector('[name=csrfmiddlewaretoken]').value);
+            fd.append('image', blob, 'scan.jpg');
+
+            const resp = await fetch("{% url 'home:analyze' %}", { method: 'POST', body: fd });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+
+            resultEl.innerHTML = data.html;
+            resultEl.scrollIntoView({ behavior: 'smooth' });
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            statusEl.classList.remove('on');
+            submitBtn.disabled = false;
+        }
+    });
+})();
+</script>
+{% endblock %}

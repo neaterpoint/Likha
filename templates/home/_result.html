@@ -1,0 +1,42 @@
+<div class="result-card">
+    <p class="eyebrow">Identified</p>
+    <h2>{{ data.item_name|capfirst }}</h2>
+    <div class="chips">
+        <span class="chip chip-soft">{{ data.material_label }}</span>
+        {% if data.is_recyclable %}<span class="chip">Recyclable</span>{% else %}<span class="chip chip-no">Not recyclable</span>{% endif %}
+        <span class="chip chip-soft">Confidence: {{ data.confidence }}</span>
+    </div>
+    <p>{{ data.recyclability_note }}</p>
+
+    <div class="value-box">
+        <div class="label">Junk shop value (estimate)</div>
+        {% if data.scrap_value %}
+            <div class="amount">&#8369;{{ data.scrap_value.min }}&ndash;{{ data.scrap_value.max }} per kg</div>
+            <small>{{ data.scrap_value.note }}</small>
+        {% else %}
+            <div class="amount">Usually not bought</div>
+            <small>Most junk shops don't buy this material. Consider upcycling it instead.</small>
+        {% endif %}
+    </div>
+</div>
+
+<p class="section-title">Upcycling ideas</p>
+{% for p in data.projects %}
+<div class="result-card project-card">
+    {% if p.image_url %}<img class="project-img" src="{{ p.image_url }}" alt="{{ p.title }} reference photo" loading="lazy">{% endif %}
+    <h3>{{ p.title }}</h3>
+    <div class="chips">
+        <span class="chip">{{ p.difficulty }}</span>
+        <span class="chip chip-soft">{{ p.time_estimate }}</span>
+    </div>
+    <p class="kv"><b>Tools:</b> {{ p.tools|join:", " }}</p>
+    <p class="kv"><b>You'll need:</b> {{ p.materials_needed|join:", " }}</p>
+    <details class="steps">
+        <summary>Step-by-step</summary>
+        <ol>{% for s in p.steps %}<li>{{ s }}</li>{% endfor %}</ol>
+    </details>
+    {% if p.image_url %}
+        <div class="credit">Image by <a href="{{ p.image_credit_url }}" target="_blank" rel="noopener">{{ p.image_credit|default:"the creator" }}</a> via {{ p.image_source|default:"Pexels" }}</div>
+    {% endif %}
+</div>
+{% endfor %}
