@@ -166,6 +166,10 @@ GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.8-flas
 GEMINI_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "75"))
 PIXABAY_API_KEY = os.environ.get("PIXABAY_API_KEY", "")   # free, instant: pixabay.com/api/docs
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY", "")     # optional; Pexels has paused new keys
+SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY", "")   # Google Images via serpapi.com (tried first)
+# Google Images "tbs" filter. Default: photos only. To restrict to Creative Commons, set it in .env:
+# in Google Images click Tools > Usage rights > Creative Commons licenses, then copy the tbs= value from the URL.
+SERPAPI_TBS = os.environ.get("SERPAPI_TBS", "itp:photos")
 
 
 # Show AI timing/errors in the runserver terminal.

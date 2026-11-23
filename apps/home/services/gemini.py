@@ -71,7 +71,7 @@ class Project(BaseModel):
     tools: list[str]
     materials_needed: list[str]
     steps: list[str] = Field(description="4 to 6 steps, one short sentence each, in order. Include a safety note where relevant.")
-    image_query: str = Field(description="2-4 word English stock-photo search phrase for the finished project.")
+    image_query: str = Field(description="3-6 word English image search phrase naming the finished project and the item it is made from, starting with 'DIY', e.g. 'DIY planter from plastic bottle'. Describe the finished result, not the raw item.")
 
 
 class Ideas(BaseModel):

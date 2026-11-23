@@ -23,7 +23,7 @@
 <p class="section-title">Upcycling ideas</p>
 {% for p in data.projects %}
 <div class="result-card project-card">
-    {% if p.image_url %}<img class="project-img" src="{{ p.image_url }}" alt="{{ p.title }} reference photo" loading="lazy">{% endif %}
+        {% if p.image_url %}<img class="project-img" src="{{ p.image_url }}" alt="{{ p.title }} reference photo" loading="lazy" referrerpolicy="no-referrer"{% if p.image_fallback_url %} data-fallback="{{ p.image_fallback_url }}"{% endif %} onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}else{this.style.display='none';}">{% endif %}
     <h3>{{ p.title }}</h3>
     <div class="chips">
         <span class="chip">{{ p.difficulty }}</span>
