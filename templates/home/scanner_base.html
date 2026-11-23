@@ -18,6 +18,7 @@
             <a href="{% url 'home:history' %}" {% if active == 'history' %}class="active"{% endif %}>History</a>
             <a href="{% url 'profile:profile' %}">Profile</a>
             <a href="{% url 'user_settings:settings' %}">Settings</a>
+            {% if user.is_staff %}<a href="{% url 'home:scan_activity' %}" {% if active == 'scan_activity' %}class="active"{% endif %}>Scan activity</a>{% endif %}
             <form method="post" action="{% url 'login:logout' %}" class="nav-form">
                 {% csrf_token %}
                 <button type="submit" class="nav-link-btn">Logout</button>

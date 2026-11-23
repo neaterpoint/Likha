@@ -1,0 +1,82 @@
+{% extends "home/scanner_base.html" %}
+{% block title %}LiKHA - Scan activity{% endblock %}
+{% block content %}
+<div class="welcome-card">
+    <p class="eyebrow">Staff tools</p>
+    <h1>Scan activity</h1>
+    <p class="subtitle">Review recent scans and the accounts that have submitted scans.</p>
+</div>
+
+<section class="panel activity-section">
+    <h2>Recent scans</h2>
+    <p class="activity-description">Each scan is joined with its owning account from the users table.</p>
+    {% if scans_page %}
+    <div class="activity-table-wrap">
+        <table class="activity-table">
+            <thead>
+                <tr><th>Item</th><th>Account</th><th>Recyclability</th><th>Scanned</th></tr>
+            </thead>
+            <tbody>
+                {% for scan in scans_page %}
+                <tr>
+                    <td>{{ scan.item_name }}</td>
+                    <td>{{ scan.user.username }}</td>
+                    <td>{% if scan.is_recyclable %}Recyclable{% else %}Not recyclable{% endif %}</td>
+                    <td>{{ scan.scanned_at|date:"M j, Y · g:i A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="activity-empty">No scans have been submitted yet.</p>
+    {% endif %}
+    {% if scans_page.has_other_pages %}
+    <nav class="activity-pagination" aria-label="Recent scans pages">
+        {% if scans_page.has_previous %}<a href="?scan_page={{ scans_page.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ scans_page.number }} of {{ scans_page.paginator.num_pages }}</span>
+        {% if scans_page.has_next %}<a href="?scan_page={{ scans_page.next_page_number }}">Next</a>{% endif %}
+    </nav>
+    {% endif %}
+    <details class="sql-details">
+        <summary>Show generated JOIN SQL</summary>
+        <pre>{{ joined_scans_sql }}</pre>
+    </details>
+</section>
+
+<section class="panel activity-section">
+    <h2>Accounts with scans</h2>
+    <p class="activity-description">Only accounts returned by the scan-history subquery appear here.</p>
+    {% if accounts_page %}
+    <div class="activity-table-wrap">
+        <table class="activity-table">
+            <thead>
+                <tr><th>Account</th><th>Total scans</th><th>Most recent scan</th></tr>
+            </thead>
+            <tbody>
+                {% for account in accounts_page %}
+                <tr>
+                    <td>{{ account.username }}</td>
+                    <td>{{ account.scan_count }}</td>
+                    <td>{{ account.latest_scan_at|date:"M j, Y · g:i A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="activity-empty">No accounts have submitted a scan yet.</p>
+    {% endif %}
+    {% if accounts_page.has_other_pages %}
+    <nav class="activity-pagination" aria-label="Accounts pages">
+        {% if accounts_page.has_previous %}<a href="?account_page={{ accounts_page.previous_page_number }}">Previous</a>{% endif %}
+        <span>Page {{ accounts_page.number }} of {{ accounts_page.paginator.num_pages }}</span>
+        {% if accounts_page.has_next %}<a href="?account_page={{ accounts_page.next_page_number }}">Next</a>{% endif %}
+    </nav>
+    {% endif %}
+    <details class="sql-details">
+        <summary>Show generated SUBQUERY SQL</summary>
+        <pre>{{ accounts_with_scans_sql }}</pre>
+    </details>
+</section>
+{% endblock %}

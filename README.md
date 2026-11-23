@@ -7,6 +7,7 @@
 ## Key Features
 
 - **Mobile-First Capture & Preprocessing:** Browser-based camera/file upload with live preview and client-side canvas downscaling, backed by server-side EXIF auto-rotation and JPEG normalization (`Pillow`).
+- **Text-Based Item Scans:** An optional description-based alternative uses the same AI classification, project generation, quota, and scan-history flow, with the input method and a visual-verification disclaimer stored in each result.
 - **Two-Tier AI Pipeline:** Decouples vision classification (Tier 1) from DIY project ideation (Tier 2) using strict Pydantic structured outputs—keeping latency low and preventing the ideation model from hallucinating unseen details.
 - **Localized Recyclability & Scrap Valuation:** Maps classified materials to a deterministic table of Philippine baseline junk-shop prices (PHP/kg) so pricing is consistent and never hallucinated by the LLM.
 - **Visual Upcycling Cards:** Generates three difficulty-varied DIY projects complete with tools, materials, safety-aware steps, and representative reference photos fetched concurrently across a multi-provider image fallback chain.
@@ -25,7 +26,8 @@ Built with a **vertical-slice Django architecture** (`apps/home`, `apps/login`, 
 | **Multi-Provider Image Chain** | Queries **SerpApi (Google Images) → Pixabay → Pexels** concurrently via `ThreadPoolExecutor`, caching hits (7 days for SerpApi, 24 hours for stock providers) and misses (1 hour), with client-side thumbnail fallback on load errors. |
 | **Rate Limiting & Quota Protection** | Enforces a `15 scans/hour` per-user limit via `ScanAttempt`. Unscannable photos count against abuse limits, while upstream provider outages automatically refund the user's attempt. |
 | **Security Hardening** | Open-redirect protection (`url_has_allowed_host_and_scheme`) on login, `POST`-only logout and delete endpoints, strict MIME/dimension/size validation on uploads, and automatic HTTPS/HSTS/secure-cookie enforcement when `DEBUG=False`. |
-| **Diagnostics & Testing** | Includes a custom `python manage.py ai_check` CLI tool to benchmark network, vision, ideation, and image providers, plus a **32-test automated suite** running on in-memory SQLite. |
+| **Database Query Examples** | Staff-only `/staff/scan-activity/` report uses `select_related('user')` to show recent scans with their account and a `Subquery` to list accounts with scans and their latest scan time. Both generated SQL statements are displayed. |
+| **Diagnostics & Testing** | Includes a custom `python manage.py ai_check` CLI tool to benchmark network, vision, ideation, and image providers, plus a **36-test automated suite** running on in-memory SQLite. |
 
 ---
 
@@ -142,6 +144,8 @@ Run the full automated test suite (uses an isolated in-memory SQLite database an
 ```bash
 python manage.py test
 ```
+
+The staff-only scan activity report is available at `/staff/scan-activity/`. It demonstrates a JOIN between `scan_history` and `auth_user`, and a subquery that selects accounts with saved scans. Both generated ORM SQL statements are shown below their result tables. Create a staff account locally with `python manage.py createsuperuser`, or use an existing staff account in the deployed environment.
 
 Benchmark the live AI and image pipeline directly from the terminal:
 

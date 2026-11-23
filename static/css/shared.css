@@ -10,6 +10,9 @@
     display: flex;
     margin: 0;
 }
+.topbar nav {
+    flex-wrap: wrap;
+}
 .topbar nav .nav-link-btn {
     background: none;
     border: none;

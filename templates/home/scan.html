@@ -28,12 +28,26 @@
     </div>
 </form>
 
+<section class="panel text-scan-panel">
+    <h2>Or describe the item</h2>
+    <p class="subtitle">Text-based identification uses your description rather than a photo; check the material and recycling advice before acting.</p>
+    <form id="text-scan-form">
+        {% csrf_token %}
+        <label for="item-description">Describe one waste item</label>
+        <textarea id="item-description" name="item_description" maxlength="300" rows="3" required placeholder="For example: a clean, empty PET water bottle"></textarea>
+        <div class="actions">
+            <button type="submit" class="btn-primary" id="text-submit-btn">Identify from description</button>
+        </div>
+    </form>
+</section>
+
 <div id="error" class="notice notice-error" role="alert" hidden></div>
 <div id="result"></div>
 
 <script>
 (function () {
     const form = document.getElementById('scan-form');
+    const textForm = document.getElementById('text-scan-form');
     const input = document.getElementById('image-input');
     const dropzone = document.getElementById('dropzone');
     const dropzoneDefault = dropzone.innerHTML;
@@ -113,6 +127,33 @@
         } finally {
             statusEl.classList.remove('on');
             submitBtn.disabled = false;
+        }
+    });
+
+    textForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const description = textForm.querySelector('[name=item_description]').value.trim();
+        if (!description) return;
+
+        const textSubmitBtn = document.getElementById('text-submit-btn');
+        textSubmitBtn.disabled = true;
+        clearError();
+        resultEl.innerHTML = '';
+        statusEl.classList.add('on');
+        statusEl.querySelector('span:last-child').textContent = 'Analyzing your description… this can take 10–30 seconds.';
+
+        try {
+            const fd = new FormData(textForm);
+            const resp = await fetch("{% url 'home:analyze_text' %}", { method: 'POST', body: fd });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+            resultEl.innerHTML = data.html;
+            resultEl.scrollIntoView({ behavior: 'smooth' });
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            statusEl.classList.remove('on');
+            textSubmitBtn.disabled = false;
         }
     });
 })();

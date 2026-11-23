@@ -90,6 +90,22 @@
 .dropzone small { color: var(--text-muted); font-size: 0.8rem; }
 .dropzone img { max-width: 100%; max-height: 320px; border-radius: 12px; object-fit: contain; }
 
+.text-scan-panel h2 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.text-scan-panel .subtitle { margin-bottom: 1rem; }
+.text-scan-panel label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem; }
+.text-scan-panel textarea {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font: inherit;
+    resize: vertical;
+}
+.text-scan-panel textarea:focus { outline: 2px solid var(--accent); }
+
 .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
 .actions .btn-primary { flex: 1; min-width: 200px; }
 
@@ -212,6 +228,31 @@ details.steps li { margin-bottom: 0.4rem; }
     color: var(--text-muted); text-decoration: none;
 }
 .back-link:hover { color: var(--text-color); }
+
+/* ---- staff scan activity ---- */
+.activity-section h2 { font-size: 1.1rem; margin-bottom: 0.45rem; }
+.activity-description,
+.activity-empty { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1rem; }
+.activity-table-wrap { overflow-x: auto; }
+.activity-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.activity-table th,
+.activity-table td { padding: 0.75rem 0.6rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+.activity-table th { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; }
+.activity-pagination { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; font-size: 0.8rem; }
+.activity-pagination a,
+.sql-details summary { color: var(--text-color); font-weight: 700; cursor: pointer; }
+.sql-details { margin-top: 1.25rem; }
+.sql-details pre {
+    overflow-x: auto;
+    margin-top: 0.75rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: var(--page-bg);
+    color: var(--text-color);
+    font: 0.72rem/1.5 Consolas, monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
 
 @media (max-width: 640px) {
     .panel, .result-card { padding: 1.5rem; }
