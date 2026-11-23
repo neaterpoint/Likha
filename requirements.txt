@@ -1,7 +1,9 @@
-django
-python-dotenv
-dj-database-url
-psycopg[binary]
-google-genai
-requests
-pillow
+Django==6.1.3
+python-dotenv==1.2.4
+dj-database-url==3.1.2
+psycopg[binary]==3.3.9
+google-genai==3.3.0
+requests==2.34.2
+pillow==13.0.0
+whitenoise
+gunicorn

@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ user_theme|default:'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiKHA - Home</title>
     <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shared.css' %}">
 </head>
 <body>
     <header class="topbar">
@@ -16,7 +17,10 @@
             <a href="{% url 'home:history' %}">History</a>
             <a href="{% url 'profile:profile' %}">Profile</a>
             <a href="{% url 'user_settings:settings' %}">Settings</a>
-            <a href="{% url 'login:logout' %}">Logout</a>
+            <form method="post" action="{% url 'login:logout' %}" class="nav-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-link-btn">Logout</button>
+            </form>
         </nav>
     </header>
 
@@ -49,14 +53,17 @@
             <a href="{% url 'user_settings:settings' %}" class="tile">
                 <span class="tile-icon" aria-hidden="true">&#9881;</span>
                 <span class="tile-title">Settings</span>
-                <span class="tile-desc">Manage dark mode and notifications.</span>
+                <span class="tile-desc">Switch between light and dark mode.</span>
             </a>
 
-            <a href="{% url 'login:logout' %}" class="tile tile-muted">
-                <span class="tile-icon" aria-hidden="true">&#8618;</span>
-                <span class="tile-title">Logout</span>
-                <span class="tile-desc">Sign out of your account.</span>
-            </a>
+            <form method="post" action="{% url 'login:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="tile tile-muted">
+                    <span class="tile-icon" aria-hidden="true">&#8618;</span>
+                    <span class="tile-title">Logout</span>
+                    <span class="tile-desc">Sign out of your account.</span>
+                </button>
+            </form>
         </div>
     </main>
 

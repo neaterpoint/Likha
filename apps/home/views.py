@@ -4,20 +4,36 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from .models import ScanHistory
-from .services.gemini import AIError, analyze_image
+from .models import ScanAttempt, ScanHistory
+from .services.gemini import AIError, NotScannable, analyze_image
 from .services.imaging import InvalidImage, prepare_image
 
 logger = logging.getLogger(__name__)
 
 # Protects your Gemini quota/bill from runaway use.
+# Counts every request that reaches the AI, including photos rejected as "not scannable".
 MAX_SCANS_PER_HOUR = 15
+
+
+import random   # add near the other imports; you can also delete the unused `from django.db import transaction`
+
+def _register_attempt(user):
+    """Record an AI attempt. Returns (attempt, within_limit)."""
+    now = timezone.now()
+    attempt = ScanAttempt.objects.create(user=user)
+    recent = ScanAttempt.objects.filter(
+        user=user, created_at__gte=now - timedelta(hours=1)
+    ).count()
+    if random.random() < 0.05:   # occasional cleanup, so it doesn't cost a query on every scan
+        ScanAttempt.objects.filter(created_at__lt=now - timedelta(days=1)).delete()
+    return attempt, recent <= MAX_SCANS_PER_HOUR
 
 
 @login_required
@@ -39,14 +55,6 @@ def analyze_view(request):
     if not upload:
         return JsonResponse({'error': 'Please choose or take a photo first.'}, status=400)
 
-    recent = ScanHistory.objects.filter(
-        user=request.user, scanned_at__gte=timezone.now() - timedelta(hours=1)
-    ).count()
-    if recent >= MAX_SCANS_PER_HOUR:
-        return JsonResponse(
-            {'error': "You've reached the hourly scan limit. Please try again later."}, status=429
-        )
-
     logger.info("[scan] request from %s, upload=%d KB", request.user.username, upload.size // 1024)
     try:
         jpeg = prepare_image(upload)
@@ -55,9 +63,19 @@ def analyze_view(request):
         return JsonResponse({'error': str(exc)}, status=400)
     logger.info("[scan] image prepared: %d KB -> %d KB in %.2fs", upload.size // 1024, len(jpeg) // 1024, time.monotonic() - started)
 
+    # CHANGED: _register_attempt now returns (attempt, allowed)
+    attempt, allowed = _register_attempt(request.user)
+    if not allowed:
+        return JsonResponse(
+            {'error': "You've reached the hourly scan limit. Please try again later."}, status=429
+        )
+
     try:
         data = analyze_image(jpeg)
     except AIError as exc:
+        # CHANGED: refund the attempt for provider-side failures (not for "not scannable" photos)
+        if not isinstance(exc, NotScannable):
+            attempt.delete()
         logger.warning("[scan] FAILED after %.1fs: %s (HTTP %s)", time.monotonic() - started, exc.message, exc.status)
         return JsonResponse({'error': exc.message}, status=exc.status)
 

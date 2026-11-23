@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ user_theme|default:'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiKHA - Profile</title>
     <link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shared.css' %}">
 </head>
 <body>
     <header class="topbar">
@@ -16,7 +17,10 @@
             <a href="{% url 'home:history' %}">History</a>
             <a href="{% url 'profile:profile' %}" class="active">Profile</a>
             <a href="{% url 'user_settings:settings' %}">Settings</a>
-            <a href="{% url 'login:logout' %}">Logout</a>
+            <form method="post" action="{% url 'login:logout' %}" class="nav-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-link-btn">Logout</button>
+            </form>
         </nav>
     </header>
 
@@ -35,6 +39,10 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
+                {% if form.non_field_errors %}
+                    <p class="field-error">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
+
                 <div class="avatar-row">
                     <div class="avatar">
                         {% if profile.avatar_path %}
@@ -45,23 +53,29 @@
                     </div>
                     <label class="file-label">
                         Change photo
-                        <input type="file" name="avatar_path" hidden>
+                        <input type="file" name="avatar_path" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
                     </label>
                 </div>
+                {% if form.avatar_path.errors %}
+                    <div class="field"><span class="field-error">{{ form.avatar_path.errors.0 }}</span></div>
+                {% endif %}
 
                 <div class="field">
-                    <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" value="{{ profile.first_name }}" placeholder="First name">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors.0 }}</span>{% endif %}
                 </div>
 
                 <div class="field">
-                    <label for="last_name">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" value="{{ profile.last_name }}" placeholder="Last name">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors.0 }}</span>{% endif %}
                 </div>
 
                 <div class="field">
-                    <label for="bio">Bio</label>
-                    <textarea id="bio" name="bio" rows="4" placeholder="A short bio">{{ profile.bio }}</textarea>
+                    <label for="{{ form.bio.id_for_label }}">Bio</label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}<span class="field-error">{{ form.bio.errors.0 }}</span>{% endif %}
                 </div>
 
                 <button type="submit" class="btn-primary">Save changes</button>

@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ user_theme|default:'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiKHA - Settings</title>
     <link rel="stylesheet" href="{% static 'css/user_settings/settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shared.css' %}">
 </head>
 <body>
     <header class="topbar">
@@ -16,7 +17,10 @@
             <a href="{% url 'home:history' %}">History</a>
             <a href="{% url 'profile:profile' %}">Profile</a>
             <a href="{% url 'user_settings:settings' %}" class="active">Settings</a>
-            <a href="{% url 'login:logout' %}">Logout</a>
+            <form method="post" action="{% url 'login:logout' %}" class="nav-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-link-btn">Logout</button>
+            </form>
         </nav>
     </header>
 
@@ -49,10 +53,10 @@
                 <div class="switch-row">
                     <div>
                         <p class="switch-title">Email notifications</p>
-                        <p class="switch-subtitle">Get updates sent to your inbox.</p>
+                        <p class="switch-subtitle">Coming soon.</p>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" name="email_notifications" {% if settings.email_notifications %}checked{% endif %}>
+                        <input type="checkbox" disabled>
                         <span class="slider"></span>
                     </label>
                 </div>

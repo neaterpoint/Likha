@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
 
 class ScanHistory(models.Model):
     scan_id = models.AutoField(primary_key=True)
@@ -17,3 +18,18 @@ class ScanHistory(models.Model):
 
     def __str__(self):
         return f"{self.item_name} scanned by {self.user.username}"
+
+
+class ScanAttempt(models.Model):
+    """One row per request that reached the AI, successful or not. Powers the hourly rate limit."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='scan_attempts')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'scan_attempts'
+        indexes = [
+            models.Index(fields=['user', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"attempt by {self.user.username} at {self.created_at:%Y-%m-%d %H:%M}"

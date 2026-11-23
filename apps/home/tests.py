@@ -7,7 +7,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
-from .models import ScanHistory
+from .models import ScanAttempt, ScanHistory
 from .services import gemini
 from .services.gemini import Classification, Ideas, Project
 
@@ -30,7 +30,7 @@ def fake_generate(contents, schema, system_instruction, level, label=""):
         for i in range(3)
     ])
 
-
+@override_settings(PIXABAY_API_KEY="", PEXELS_API_KEY="")
 class ScannerTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user("vince", password="pw12345!")
@@ -99,10 +99,27 @@ class ScannerTests(TestCase):
         self.assertEqual(ScanHistory.objects.count(), 0)
 
     def test_hourly_limit(self):
-        for _ in range(15):
-            ScanHistory.objects.create(user=self.user, item_name="x", cached_api_data={})
+        ScanAttempt.objects.bulk_create([ScanAttempt(user=self.user) for _ in range(15)])
         r = self.client.post(reverse("home:analyze"), {"image": fake_jpeg()})
         self.assertEqual(r.status_code, 429)
+
+    @patch.object(gemini, "_generate")
+    def test_unscannable_photos_still_count_toward_limit(self, gen):
+        gen.return_value = Classification(
+            is_scannable_item=False, item_name="person", material="other",
+            is_recyclable=False, recyclability_note="", confidence="low",
+        )
+        url = reverse("home:analyze")
+        for _ in range(15):
+            self.assertEqual(self.client.post(url, {"image": fake_jpeg()}).status_code, 422)
+        self.assertEqual(self.client.post(url, {"image": fake_jpeg()}).status_code, 429)
+
+    @patch.object(gemini, "_generate", side_effect=gemini.AIBusy("busy"))
+    def test_provider_failures_do_not_use_up_the_quota(self, _):
+        url = reverse("home:analyze")
+        for _ in range(20):   # more than the 15/hour limit
+            self.assertEqual(self.client.post(url, {"image": fake_jpeg()}).status_code, 429)
+        self.assertEqual(ScanAttempt.objects.filter(user=self.user).count(), 0)
 
     @override_settings(GEMINI_API_KEY="")
     def test_missing_key(self):
