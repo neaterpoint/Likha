@@ -36,7 +36,7 @@
         <ol>{% for s in p.steps %}<li>{{ s }}</li>{% endfor %}</ol>
     </details>
     {% if p.image_url %}
-        <div class="credit">Image by <a href="{{ p.image_credit_url }}" target="_blank" rel="noopener">{{ p.image_credit|default:"the creator" }}</a> via {{ p.image_source|default:"Pexels" }}</div>
+        <div class="credit">Image by <a href="{{ p.image_credit_url }}" target="_blank" rel="noopener">{{ p.image_credit|default:"the creator" }}</a> via {{ p.image_source|default:"Pixabay" }}</div>
     {% endif %}
 </div>
 {% endfor %}

@@ -1,12 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ user_theme|default:'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LiKHA{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/scan.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shared.css' %}">
 </head>
 <body>
     <header class="topbar">
@@ -17,7 +18,10 @@
             <a href="{% url 'home:history' %}" {% if active == 'history' %}class="active"{% endif %}>History</a>
             <a href="{% url 'profile:profile' %}">Profile</a>
             <a href="{% url 'user_settings:settings' %}">Settings</a>
-            <a href="{% url 'login:logout' %}">Logout</a>
+            <form method="post" action="{% url 'login:logout' %}" class="nav-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-link-btn">Logout</button>
+            </form>
         </nav>
     </header>
 
