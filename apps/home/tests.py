@@ -30,7 +30,7 @@ def fake_generate(contents, schema, system_instruction, level, label=""):
         for i in range(3)
     ])
 
-@override_settings(PIXABAY_API_KEY="", PEXELS_API_KEY="")
+@override_settings(PIXABAY_API_KEY="", PEXELS_API_KEY="", SERPAPI_API_KEY="")
 class ScannerTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user("vince", password="pw12345!")
@@ -128,10 +128,43 @@ class ScannerTests(TestCase):
         self.assertEqual(r.status_code, 503)
 
 
-class StockImageTests(TestCase):
-    def setUp(self):
-        from django.core.cache import cache
-        cache.clear()
+    @override_settings(SERPAPI_API_KEY="s", PIXABAY_API_KEY="", PEXELS_API_KEY="")
+    def test_serpapi_picks_relevant_https_result(self):
+        from .services import stock_images
+        payload = {"images_results": [
+            {"title": "Buy planter", "original": "https://shop/a.jpg", "thumbnail": "https://t/a.jpg",
+             "original_width": 900, "original_height": 700, "is_product": True, "source": "Shop", "link": "https://shop/p"},
+            {"title": "Bottle", "original": "http://insecure/b.jpg", "thumbnail": "https://t/b.jpg",
+             "original_width": 900, "original_height": 700, "source": "Blog", "link": "https://blog/b"},
+            {"title": "DIY planter from plastic bottle", "original": "https://blog/c.jpg", "thumbnail": "https://t/c.jpg",
+             "original_width": 1200, "original_height": 800, "source": "Crafty", "link": "https://crafty/c"},
+        ]}
+        with patch("apps.home.services.stock_images.requests.get") as get:
+            get.return_value.json.return_value = payload
+            projects = [{"image_query": "DIY planter from plastic bottle"}]
+            stock_images.attach_images(projects)
+        self.assertEqual(projects[0]["image_url"], "https://blog/c.jpg")
+        self.assertEqual(projects[0]["image_fallback_url"], "https://t/c.jpg")
+        self.assertEqual(projects[0]["image_credit"], "Crafty")
+        self.assertEqual(projects[0]["image_source"], "Google Images")
+
+    @override_settings(SERPAPI_API_KEY="s", PIXABAY_API_KEY="k", PEXELS_API_KEY="")
+    def test_falls_back_to_pixabay_when_serpapi_fails(self):
+        from unittest.mock import MagicMock
+        from .services import stock_images
+
+        def fake_get(url, **kwargs):
+            if "serpapi" in url:
+                raise Exception("quota used up")
+            r = MagicMock()
+            r.json.return_value = {"hits": [
+                {"webformatURL": "https://x/y.jpg", "user": "ann", "pageURL": "https://pixabay.com/p/1"}]}
+            return r
+
+        with patch("apps.home.services.stock_images.requests.get", side_effect=fake_get):
+            projects = [{"image_query": "bottle planter"}]
+            stock_images.attach_images(projects)
+        self.assertEqual(projects[0]["image_source"], "Pixabay")
 
     @override_settings(PIXABAY_API_KEY="k", PEXELS_API_KEY="")
     def test_pixabay_lookup_and_cache(self):
